@@ -46,7 +46,7 @@ def model_info(model, report='summary'):
     # Plots a line-by-line description of a PyTorch model
     n_p = sum(x.numel() for x in model.parameters())  # number parameters
     n_g = sum(x.numel() for x in model.parameters() if x.requires_grad)  # number gradients
-    if report is 'full':
+    if report == 'full':
         print('%5s %40s %9s %12s %20s %10s %10s' % ('layer', 'name', 'gradient', 'parameters', 'shape', 'mu', 'sigma'))
         for i, (name, p) in enumerate(model.named_parameters()):
             name = name.replace('module_list.', '')
@@ -407,7 +407,7 @@ def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.5):
     min_wh = 2  # (pixels) minimum box width and height
 
     output = [None] * len(prediction)
-    for image_i, pred in enumerate(prediction):
+    for image_i, preds in enumerate(prediction):
         # Experiment: Prior class size rejection
         # x, y, w, h = pred[:, 0], pred[:, 1], pred[:, 2], pred[:, 3]
         # a = w * h  # area
@@ -420,12 +420,20 @@ def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.5):
         # for c in range(60):
         # shape_likelihood[:, c] =
         #   multivariate_normal.pdf(x, mean=mat['class_mu'][c, :2], cov=mat['class_cov'][c, :2, :2])
-
         # Multiply conf by class conf to get combined confidence
+        
+        
+        pred = preds.clone().detach()
+        
         class_conf, class_pred = pred[:, 5:].max(1)
-        pred[:, 4] *= class_conf
+        
+        
 
-        # Select only suitable predictions
+        pred[:, 4] *=  class_conf 
+
+        
+        
+
         i = (pred[:, 4] > conf_thres) & (pred[:, 2:4] > min_wh).all(1) & torch.isfinite(pred).all(1)
         pred = pred[i]
 

@@ -1,9 +1,11 @@
 from yolo.detect import *
 import cv2
 
+import sys
+
 cfg = 'yolo/model/yolo-drone.cfg'
 data = 'yolo/model/yolo-drone.data'
-weights = 'yolo/model/yolo-drone_80000_49.weights'
+weights = 'yolo/model/yolo-drone_190000_49.weights'
 images = 'Input'
 img_size = 416
 conf_thres = 0.15
@@ -19,4 +21,10 @@ output = 'output'
 #
 # BBox, probability = detector.detectFrame(img)
 
-detection_video('Input/Trim840.mp4', cfg=cfg, data = data, weights = weights, save_output = False, show_output = True)
+
+
+
+if __name__ == "__main__":
+    vide_name = sys.argv[1]
+    detection_video('Input/'+vide_name, cfg=cfg, data = data, weights = weights, save_output = True, show_output = True)
+    
